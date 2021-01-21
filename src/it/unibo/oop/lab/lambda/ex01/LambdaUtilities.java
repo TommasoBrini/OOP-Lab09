@@ -1,7 +1,9 @@
 package it.unibo.oop.lab.lambda.ex01;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,32 +49,26 @@ public final class LambdaUtilities {
     }
 
     /**
-     * @param list
-     *            input list
-     * @param pre
-     *            predicate to execute
-     * @param <T>
-     *            element type
-     * @return a list where each value is an Optional, holding the previous
-     *         value only if the predicate passes, and an Empty optional
-     *         otherwise.
+     * @param list input list
+     * @param pre  predicate to execute
+     * @param <T>  element type
+     * @return a list where each value is an Optional, holding the previous value
+     *         only if the predicate passes, and an Empty optional otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
         /*
          * Suggestion: consider Optional.filter
          */
-        return null;
+        final List<Optional<T>> l = new ArrayList<>();
+        list.forEach(t -> l.add(Optional.ofNullable(t).filter(pre)));
+        return l;
     }
 
     /**
-     * @param list
-     *            input list
-     * @param op
-     *            a function that, for each element, computes a key
-     * @param <T>
-     *            element type
-     * @param <R>
-     *            key type
+     * @param list input list
+     * @param op   a function that, for each element, computes a key
+     * @param <T>  element type
+     * @param <R>  key type
      * @return a map that groups into categories each element of the input list,
      *         based on the mapping done by the function
      */
@@ -80,7 +76,14 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Map.merge
          */
-        return null;
+        final Map<R, Set<T>> map = new HashMap<>();
+        list.forEach(t -> {
+            map.merge(op.apply(t), new HashSet<>(Arrays.asList(t)), (t1, t2) -> {
+                t1.addAll(t2);
+                return t1;
+            });
+        });
+        return map;
     }
 
     /**
@@ -101,7 +104,9 @@ public final class LambdaUtilities {
          * 
          * Keep in mind that a map can be iterated through its forEach method
          */
-        return null;
+        final Map<K, V> m = new HashMap<>();
+        map.forEach((k, v) -> m.put(k, v.orElse(def.get())));
+        return m;
     }
 
     /**
